@@ -67,30 +67,29 @@ var addlife = new BoardIterator(function (piece) {
 
 var findHead = function(cb) {
 	var max = -Infinity
-	var rowOfMax = -1
-	var colOfMax = -1
-	board.forEach(function (columnArray, colIndex) {
-		columnArray.forEach(function (block, rowIndex) {
-			if (block>max) {
-				rowOfMax = Number(rowIndex)
-				colOfMax = Number(colIndex)
-				max = block
-			}
-		})
+	var maxX = -1
+	var maxY = -1
+	BoardIterator(function (piece, x, y) {
+		if (piece>max) {
+			max = piece
+			maxX = Number(x)
+			maxY = Number(y)
+		}
 	})
-	cb(colOfMax, rowOfMax)
+	cb(maxX, maxY)
 }
 
 var step = function () {
 	findHead(function (x, y) {
 		switch(snakeDir) {
-			case D_RIGHT: (x<BOARD_WIDTH-1)?board[x+1][y] = snakeLen
-			case D_UP:    
-			case D_LEFT:  
-			case D_DOWN:  
+			case D_RIGHT: (x<BOARD_WIDTH-1) ?  board[x+1][y] = snakeLen : return false
+			case D_UP:    (y>0) ?              board[x][y-1] = snakeLen : return false
+			case D_LEFT:  (x>0) ?              board[x-1][y] = snakeLen : return false
+			case D_DOWN:  (y<BOARD_HEIGHT-1) ? board[x][y+1] = snakeLen : return false
 			default: throw Error("invalid direction")
 		}
 	})
+	return true
 }
 
 var io = function () {
